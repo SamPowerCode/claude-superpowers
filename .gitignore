@@ -1,0 +1,14 @@
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+*.egg
+.claude/
+.github/
+.idea/
+.vscode/
