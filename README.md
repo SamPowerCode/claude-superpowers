@@ -30,11 +30,13 @@ You'll be prompted to choose where to install:
 ```
 Where would you like to install the Superpowers skills?
 
-  1. This project (GitHub Copilot)  →  .github/skills/
-  2. This project (Claude Code)     →  .claude/skills/
-  3. GitHub Copilot (global)        →  ~/.copilot/skills/
-  4. Claude Code (global)           →  ~/.claude/skills/
+  1. This project (GitHub Copilot)  →  .github/skills/   [Copilot-adapted]
+  2. This project (Claude Code)     →  .claude/skills/   [original]
+  3. GitHub Copilot (global)        →  ~/.copilot/skills/ [Copilot-adapted]
+  4. Claude Code (global)           →  ~/.claude/skills/  [original]
 ```
+
+Copilot targets (1 and 3) install a version of the skills adapted for GitHub Copilot on Windows — subagent references removed, `#file:` loading patterns added, PowerShell equivalents included. Claude Code targets (2 and 4) install the original upstream skills unchanged.
 
 **Options:**
 
@@ -46,7 +48,8 @@ Where would you like to install the Superpowers skills?
 ### List bundled skills
 
 ```bash
-agent-superpowers list
+agent-superpowers list             # original skills
+agent-superpowers list --copilot   # Copilot-adapted skills
 ```
 
 ### Check version
@@ -75,6 +78,14 @@ agent-superpowers --version
 | `using-git-worktrees` | For isolated feature branches |
 | `writing-skills` | When creating new skills |
 | `using-superpowers` | Session initialization |
+
+### GitHub Copilot adaptation
+
+The package also includes a full copy of the obra/superpowers repository content (`CLAUDE.md`, `GEMINI.md`, `commands/`, `agents/`, `hooks/`, platform plugins, etc.) alongside the Copilot-adapted skills.
+
+For GitHub Copilot users, a `copilot-instructions-template.md` is included — copy its contents into your project's `.github/copilot-instructions.md` to auto-load skill awareness into every Copilot Chat session.
+
+See `COPILOT-ADAPTATION.md` in this repo for the full specification of what was changed and why.
 
 ## Credits
 
