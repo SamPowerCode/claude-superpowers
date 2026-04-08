@@ -33,10 +33,11 @@ def test_parse_args_skip_existing_flag():
 
 
 def test_parse_args_version_flag(capsys):
+    from agent_superpowers import __version__
     with pytest.raises(SystemExit):
         parse_args(["--version"])
     captured = capsys.readouterr()
-    assert "5.0.6" in captured.out or "5.0.6" in captured.err
+    assert __version__ in captured.out or __version__ in captured.err
 
 
 # --- list_skills ---

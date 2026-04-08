@@ -27,7 +27,7 @@ ls -d worktrees 2>/dev/null      # Alternative
 
 **If found:** Use that directory. If both exist, `.worktrees` wins.
 
-### 2. Check `.github/copilot-instructions.md`
+### 2. Check CLAUDE.md
 
 ```bash
 grep -i "worktree.*director" .github/copilot-instructions.md 2>/dev/null
@@ -38,14 +38,13 @@ grep -i "worktree.*director" .github/copilot-instructions.md 2>/dev/null
 
 ### 3. Ask User
 
-If no directory exists and no `.github/copilot-instructions.md` preference:
+If no directory exists and no CLAUDE.md preference:
 
 ```
 No worktree directory found. Where should I create worktrees?
 
 1. .worktrees/ (project-local, hidden)
 2. ~/.config/superpowers/worktrees/<project-name>/ (global location)
-   (Windows: `%USERPROFILE%\.config\superpowers\worktrees\<project-name>\` or use Git Bash path style)
 
 Which would you prefer?
 ```
@@ -76,12 +75,12 @@ No .gitignore verification needed - outside project entirely.
 
 ## Creation Steps
 
+### 1. Detect Project Name
+
 > **Windows paths:** Git worktrees work on Windows with Git for Windows installed.
-> Use forward slashes in git commands even on Windows (Git handles the translation).
+> Use forward slashes in git commands (Git handles the translation).
 > For PowerShell, `$HOME` replaces `~`:
 > `git worktree add "$HOME/.config/superpowers/worktrees/$project/$BRANCH_NAME" -b $BRANCH_NAME`
-
-### 1. Detect Project Name
 
 ```bash
 project=$(basename "$(git rev-parse --show-toplevel)")
@@ -155,7 +154,7 @@ Ready to implement <feature-name>
 | `.worktrees/` exists | Use it (verify ignored) |
 | `worktrees/` exists | Use it (verify ignored) |
 | Both exist | Use `.worktrees/` |
-| Neither exists | Check copilot-instructions.md → Ask user |
+| Neither exists | Check CLAUDE.md → Ask user |
 | Directory not ignored | Add to .gitignore + commit |
 | Tests fail during baseline | Report failures + ask |
 | No package.json/Cargo.toml | Skip dependency install |
@@ -170,7 +169,7 @@ Ready to implement <feature-name>
 ### Assuming directory location
 
 - **Problem:** Creates inconsistency, violates project conventions
-- **Fix:** Follow priority: existing > copilot-instructions.md > ask
+- **Fix:** Follow priority: existing > CLAUDE.md > ask
 
 ### Proceeding with failing tests
 
@@ -205,10 +204,10 @@ Ready to implement auth feature
 - Skip baseline test verification
 - Proceed with failing tests without asking
 - Assume directory location when ambiguous
-- Skip copilot-instructions.md check
+- Skip CLAUDE.md check
 
 **Always:**
-- Follow directory priority: existing > copilot-instructions.md > ask
+- Follow directory priority: existing > CLAUDE.md > ask
 - Verify directory is ignored for project-local
 - Auto-detect and run project setup
 - Verify clean test baseline

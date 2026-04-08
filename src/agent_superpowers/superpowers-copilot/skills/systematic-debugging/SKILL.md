@@ -105,19 +105,14 @@ You MUST complete each phase before proceeding to the next.
    codesign --sign "$IDENTITY" --verbose=4 "$APP"
    ```
 
-   **This reveals:** Which layer fails (secrets → workflow ✓, workflow → build ✗)
-
    **Windows PowerShell equivalents:**
    ```powershell
-   # Layer 1: Check environment variables
+   # Check environment variables
    if ($env:IDENTITY) { "IDENTITY: SET" } else { "IDENTITY: UNSET" }
-
-   # Layer 2: List env vars matching a pattern
    Get-ChildItem Env: | Where-Object Name -like "IDENTITY*"
-
-   # Layer 3: Check keychain / certificate store
-   Get-ChildItem Cert:\CurrentUser\My
    ```
+
+   **This reveals:** Which layer fails (secrets → workflow ✓, workflow → build ✗)
 
 5. **Trace Data Flow**
 

@@ -11,7 +11,7 @@ description: Use when creating new skills, editing existing skills, or verifying
 
 **Personal skills live in agent-specific directories (`~/.claude/skills` for Claude Code).
 For GitHub Copilot, keep skills in this repository at `src/agent_superpowers/superpowers-copilot/skills/`
-and load them via `#file:` references or add them to `.github/copilot-instructions.md`.**
+and load them via `#file:` references or add them to `.github/copilot-instructions.md`.** 
 
 You write test cases (pressure scenarios with subagents), watch them fail (baseline behavior), write the skill (documentation), watch tests pass (agents comply), and refactor (close loopholes).
 

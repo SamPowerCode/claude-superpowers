@@ -1,4 +1,4 @@
-name: Sync skills from upstream
+name: Sync superpowers from upstream
 
 on:
   schedule:
@@ -14,39 +14,63 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch upstream skills
-        run: |
-          git clone --depth=1 --filter=blob:none --sparse \
-            https://github.com/obra/superpowers.git /tmp/superpowers
-          cd /tmp/superpowers
-          git sparse-checkout set skills
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-      - name: Copy skills
+      - name: Fetch upstream superpowers
         run: |
-          rsync -av --delete /tmp/superpowers/skills/ src/agent_superpowers/skills/
+          git clone --depth=1 https://github.com/obra/superpowers.git /tmp/superpowers
+
+      - name: Sync superpowers directory
+        run: |
+          rsync -av --delete \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            /tmp/superpowers/ src/agent_superpowers/superpowers/
+
+      - name: Regenerate Copilot-adapted variant
+        run: python scripts/regenerate_copilot.py
 
       - name: Check for changes
         id: diff
         run: |
-          git diff --quiet src/agent_superpowers/skills/ || echo "changed=true" >> $GITHUB_OUTPUT
+          git add src/agent_superpowers/superpowers/ src/agent_superpowers/superpowers-copilot/
+          git diff --cached --quiet || echo "changed=true" >> $GITHUB_OUTPUT
 
-      - name: Bump patch version
+      - name: Bump minor version
         if: steps.diff.outputs.changed == 'true'
         run: |
           python - <<'EOF'
           import re, pathlib
+
+          # pyproject.toml
           p = pathlib.Path("pyproject.toml")
           text = p.read_text()
-          ver = re.search(r'version = "(\d+\.\d+\.)(\d+)"', text)
-          new = str(int(ver.group(2)) + 1)
-          p.write_text(text.replace(ver.group(0), f'version = "{ver.group(1)}{new}"'))
+          m = re.search(r'version = "(\d+)\.(\d+)\.(\d+)"', text)
+          new_ver = f'{m.group(1)}.{int(m.group(2)) + 1}.0'
+          p.write_text(text.replace(m.group(0), f'version = "{new_ver}"'))
+
+          # __init__.py
+          i = pathlib.Path("src/agent_superpowers/__init__.py")
+          i.write_text(re.sub(r'__version__ = "[^"]+"', f'__version__ = "{new_ver}"', i.read_text()))
+
+          print(f"Bumped to {new_ver}")
           EOF
 
       - name: Open PR
         if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "chore: sync skills from obra/superpowers"
-          title: "chore: sync skills from upstream"
-          branch: sync/skills-upstream
-          body: "Automated sync of skills from obra/superpowers. Version bumped."
+          commit-message: "chore: sync superpowers from obra/superpowers"
+          title: "chore: sync superpowers from upstream"
+          branch: sync/superpowers-upstream
+          body: |
+            Automated sync of obra/superpowers content.
+
+            Changes:
+            - `superpowers/` synced from upstream
+            - `superpowers-copilot/` regenerated via `scripts/regenerate_copilot.py`
+            - Minor version bumped
+
+            If `regenerate_copilot.py` reported warnings, check the step output and update the script if upstream skill content changed.

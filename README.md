@@ -60,7 +60,7 @@ agent-superpowers --version
 
 ## What gets installed
 
-14 skills from the [obra/superpowers](https://github.com/obra/superpowers) framework (v5.0.6):
+14 skills from the [obra/superpowers](https://github.com/obra/superpowers) framework (v5.1.0):
 
 | Skill | When to use |
 |---|---|
@@ -83,9 +83,7 @@ agent-superpowers --version
 
 The package also includes a full copy of the obra/superpowers repository content (`CLAUDE.md`, `GEMINI.md`, `commands/`, `agents/`, `hooks/`, platform plugins, etc.) alongside the Copilot-adapted skills.
 
-For GitHub Copilot users, a `copilot-instructions-template.md` is included — copy its contents into your project's `.github/copilot-instructions.md` to auto-load skill awareness into every Copilot Chat session.
-
-See `COPILOT-ADAPTATION.md` in this repo for the full specification of what was changed and why.
+For GitHub Copilot users, a `copilot-instructions-template.md` is included in the Copilot variant — copy its contents into your project's `.github/copilot-instructions.md` to auto-load skill awareness into every Copilot Chat session.
 
 ## Credits
 

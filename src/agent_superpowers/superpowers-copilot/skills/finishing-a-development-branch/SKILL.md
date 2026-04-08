@@ -101,11 +101,10 @@ gh pr create --title "<title>" --body "$(cat <<'EOF'
 - [ ] <verification steps>
 EOF
 )"
-```
-
 
 > **Windows:** Requires [GitHub CLI](https://cli.github.com/) installed and authenticated.
 > Run `gh auth login` once to set up.
+```
 
 Then: Cleanup worktree (Step 5)
 
@@ -137,10 +136,10 @@ git branch -D <feature-branch>
 
 Then: Cleanup worktree (Step 5)
 
-> **GitHub Copilot / no worktrees:** If you are not using git worktrees, skip Step 5.
-> If you are using worktrees, run `git worktree remove <path>` in the terminal manually.
-
 ### Step 5: Cleanup Worktree
+
+> **GitHub Copilot / no worktrees:** If you are not using git worktrees, skip this step.
+> If you are using worktrees, run `git worktree remove <path>` in the terminal manually.
 
 **For Options 1, 2, 4:**
 
