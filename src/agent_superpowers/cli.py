@@ -3,7 +3,12 @@ import sys
 from pathlib import Path
 
 from agent_superpowers import __version__
-from agent_superpowers.installer import get_skills_dir, install_skills, SkillConflictError
+from agent_superpowers.installer import (
+    get_skills_dir,
+    get_copilot_skills_dir,
+    install_skills,
+    SkillConflictError,
+)
 
 
 def get_project_root() -> Path:
@@ -16,10 +21,10 @@ def prompt_choice() -> int:
     print()
     print("Where would you like to install the Superpowers skills?")
     print()
-    print("  1. This project (GitHub Copilot)  →  .github/skills/")
-    print("  2. This project (Claude Code)     →  .claude/skills/")
-    print("  3. GitHub Copilot (global)        →  ~/.copilot/skills/")
-    print("  4. Claude Code (global)           →  ~/.claude/skills/")
+    print("  1. This project (GitHub Copilot)  →  .github/skills/   [Copilot-adapted]")
+    print("  2. This project (Claude Code)     →  .claude/skills/   [original]")
+    print("  3. GitHub Copilot (global)        →  ~/.copilot/skills/ [Copilot-adapted]")
+    print("  4. Claude Code (global)           →  ~/.claude/skills/  [original]")
     print()
     while True:
         raw = input("Enter choice [1/2/3/4]: ").strip()
@@ -40,9 +45,13 @@ def _target_for_choice(choice: int) -> Path:
     raise ValueError(f"Invalid choice: {choice}")
 
 
-def list_skills() -> None:
+def _is_copilot_choice(choice: int) -> bool:
+    return choice in (1, 3)
+
+
+def list_skills(copilot: bool = False) -> None:
     """Print each bundled skill's name and description."""
-    skills_dir = get_skills_dir()
+    skills_dir = get_copilot_skills_dir() if copilot else get_skills_dir()
     for skill_dir in sorted(skills_dir.iterdir()):
         if not skill_dir.is_dir():
             continue
@@ -85,7 +94,10 @@ def parse_args(argv: list) -> argparse.Namespace:
         "--skip-existing", action="store_true", help="Skip skills that already exist"
     )
 
-    subparsers.add_parser("list", help="List bundled skills")
+    list_parser = subparsers.add_parser("list", help="List bundled skills")
+    list_parser.add_argument(
+        "--copilot", action="store_true", help="List the Copilot-adapted skills"
+    )
 
     return parser.parse_args(argv)
 
@@ -97,16 +109,18 @@ def main(argv: list = None) -> None:
     args = parse_args(argv)
 
     if args.command == "list":
-        list_skills()
+        list_skills(copilot=getattr(args, "copilot", False))
         return
 
     if args.command == "install" or args.command is None:
         choice = prompt_choice()
         target = _target_for_choice(choice)
+        copilot = _is_copilot_choice(choice)
 
         force = getattr(args, "force", False)
         skip_existing = getattr(args, "skip_existing", False)
 
-        installed = install_skills(target, force=force, skip_existing=skip_existing)
+        installed = install_skills(target, force=force, skip_existing=skip_existing, copilot=copilot)
         count = len(installed)
-        print(f"\nInstalled {count} skill{'s' if count != 1 else ''} to {target}")
+        variant = "Copilot-adapted" if copilot else "original"
+        print(f"\nInstalled {count} {variant} skill{'s' if count != 1 else ''} to {target}")

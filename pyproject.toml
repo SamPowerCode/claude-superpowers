@@ -33,6 +33,15 @@ agent_superpowers = [
     "superpowers/.opencode/**/*",
     "superpowers/.gitattributes",
     "superpowers/.gitignore",
+    "superpowers-copilot/**/*",
+    "superpowers-copilot/**/.*",
+    "superpowers-copilot/.claude-plugin/*",
+    "superpowers-copilot/.codex/*",
+    "superpowers-copilot/.cursor-plugin/*",
+    "superpowers-copilot/.opencode/*",
+    "superpowers-copilot/.opencode/**/*",
+    "superpowers-copilot/.gitattributes",
+    "superpowers-copilot/.gitignore",
 ]
 
 [tool.pytest.ini_options]

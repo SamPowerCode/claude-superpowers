@@ -17,6 +17,11 @@ def test_parse_args_list_command():
     assert args.command == "list"
 
 
+def test_parse_args_list_copilot_flag():
+    args = parse_args(["list", "--copilot"])
+    assert args.copilot is True
+
+
 def test_parse_args_force_flag():
     args = parse_args(["install", "--force"])
     assert args.force is True
@@ -43,33 +48,45 @@ def test_list_skills_outputs_skill_names(capsys):
     assert "test-driven-development" in captured.out
 
 
+def test_list_skills_copilot_outputs_skill_names(capsys):
+    list_skills(copilot=True)
+    captured = capsys.readouterr()
+    assert "brainstorming" in captured.out
+    assert "test-driven-development" in captured.out
+
+
 def test_list_skills_outputs_descriptions(capsys):
     list_skills()
     captured = capsys.readouterr()
-    # Every SKILL.md has a description in frontmatter — at least one should appear
     assert len(captured.out.strip()) > 0
 
 
 # --- main: install command with mocked prompt ---
 
 def test_main_install_project_github_copilot(tmp_path):
-    """Choice 1: .github/skills/ in current directory."""
+    """Choice 1: .github/skills/ — installs Copilot-adapted skills."""
     with patch("agent_superpowers.cli.prompt_choice", return_value=1), \
          patch("agent_superpowers.cli.get_project_root", return_value=tmp_path):
         main(["install"])
-    assert (tmp_path / ".github" / "skills").is_dir()
+    skills_dir = tmp_path / ".github" / "skills"
+    assert skills_dir.is_dir()
+    sdd = (skills_dir / "subagent-driven-development" / "SKILL.md").read_text()
+    assert "GitHub Copilot" in sdd
 
 
 def test_main_install_project_claude_code(tmp_path):
-    """Choice 2: .claude/skills/ in current directory."""
+    """Choice 2: .claude/skills/ — installs original skills."""
     with patch("agent_superpowers.cli.prompt_choice", return_value=2), \
          patch("agent_superpowers.cli.get_project_root", return_value=tmp_path):
         main(["install"])
-    assert (tmp_path / ".claude" / "skills").is_dir()
+    skills_dir = tmp_path / ".claude" / "skills"
+    assert skills_dir.is_dir()
+    sdd = (skills_dir / "subagent-driven-development" / "SKILL.md").read_text()
+    assert "GitHub Copilot:" not in sdd
 
 
 def test_main_install_global_copilot(tmp_path):
-    """Choice 3: ~/.copilot/skills/"""
+    """Choice 3: ~/.copilot/skills/ — installs Copilot-adapted skills."""
     fake_home = tmp_path / "home"
     with patch("agent_superpowers.cli.prompt_choice", return_value=3), \
          patch("agent_superpowers.cli.Path.home", return_value=fake_home):
@@ -78,7 +95,7 @@ def test_main_install_global_copilot(tmp_path):
 
 
 def test_main_install_global_claude_code(tmp_path):
-    """Choice 4: ~/.claude/skills/"""
+    """Choice 4: ~/.claude/skills/ — installs original skills."""
     fake_home = tmp_path / "home"
     with patch("agent_superpowers.cli.prompt_choice", return_value=4), \
          patch("agent_superpowers.cli.Path.home", return_value=fake_home):
@@ -86,16 +103,29 @@ def test_main_install_global_claude_code(tmp_path):
     assert (fake_home / ".claude" / "skills").is_dir()
 
 
-def test_main_install_prints_summary(tmp_path, capsys):
+def test_main_install_copilot_prints_adapted_summary(tmp_path, capsys):
     with patch("agent_superpowers.cli.prompt_choice", return_value=1), \
          patch("agent_superpowers.cli.get_project_root", return_value=tmp_path):
         main(["install"])
     captured = capsys.readouterr()
-    assert "Installed" in captured.out
-    assert "skills" in captured.out
+    assert "Copilot-adapted" in captured.out
+
+
+def test_main_install_claude_code_prints_original_summary(tmp_path, capsys):
+    with patch("agent_superpowers.cli.prompt_choice", return_value=2), \
+         patch("agent_superpowers.cli.get_project_root", return_value=tmp_path):
+        main(["install"])
+    captured = capsys.readouterr()
+    assert "original" in captured.out
 
 
 def test_main_list_calls_list_skills(capsys):
     main(["list"])
+    captured = capsys.readouterr()
+    assert "brainstorming" in captured.out
+
+
+def test_main_list_copilot_flag(capsys):
+    main(["list", "--copilot"])
     captured = capsys.readouterr()
     assert "brainstorming" in captured.out

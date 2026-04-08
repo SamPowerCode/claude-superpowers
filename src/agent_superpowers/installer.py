@@ -11,15 +11,26 @@ def get_superpowers_dir() -> Path:
     return Path(__file__).parent / "superpowers"
 
 
+def get_copilot_superpowers_dir() -> Path:
+    """Return the path to the GitHub Copilot-adapted superpowers content."""
+    return Path(__file__).parent / "superpowers-copilot"
+
+
 def get_skills_dir() -> Path:
-    """Return the path to the bundled skills directory."""
+    """Return the path to the original (Claude Code) skills directory."""
     return get_superpowers_dir() / "skills"
+
+
+def get_copilot_skills_dir() -> Path:
+    """Return the path to the GitHub Copilot-adapted skills directory."""
+    return get_copilot_superpowers_dir() / "skills"
 
 
 def install_skills(
     target: Path,
     force: bool = False,
     skip_existing: bool = False,
+    copilot: bool = False,
 ) -> list:
     """Copy all bundled skills to target directory.
 
@@ -27,6 +38,7 @@ def install_skills(
         target: Destination directory (will be created if missing).
         force: Overwrite existing skills without prompting.
         skip_existing: Leave existing skills untouched.
+        copilot: If True, install the GitHub Copilot-adapted skills instead of the originals.
 
     Returns:
         List of installed skill names.
@@ -37,7 +49,7 @@ def install_skills(
     target = Path(target)
     target.mkdir(parents=True, exist_ok=True)
 
-    skills_dir = get_skills_dir()
+    skills_dir = get_copilot_skills_dir() if copilot else get_skills_dir()
     installed = []
 
     for skill_src in sorted(skills_dir.iterdir()):
