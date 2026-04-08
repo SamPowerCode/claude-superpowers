@@ -6,9 +6,14 @@ class SkillConflictError(Exception):
     """Raised when a skill already exists at the target and force/skip_existing not set."""
 
 
+def get_superpowers_dir() -> Path:
+    """Return the path to the bundled obra/superpowers repository content."""
+    return Path(__file__).parent / "superpowers"
+
+
 def get_skills_dir() -> Path:
     """Return the path to the bundled skills directory."""
-    return Path(__file__).parent / "skills"
+    return get_superpowers_dir() / "skills"
 
 
 def install_skills(

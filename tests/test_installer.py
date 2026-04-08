@@ -1,6 +1,21 @@
 import pytest
 
-from agent_superpowers.installer import get_skills_dir, install_skills, SkillConflictError
+from agent_superpowers.installer import get_superpowers_dir, get_skills_dir, install_skills, SkillConflictError
+
+
+def test_get_superpowers_dir_returns_existing_path():
+    superpowers_dir = get_superpowers_dir()
+    assert superpowers_dir.is_dir(), f"Expected superpowers dir to exist: {superpowers_dir}"
+
+
+def test_get_superpowers_dir_contains_full_repo_content():
+    superpowers_dir = get_superpowers_dir()
+    assert (superpowers_dir / "CLAUDE.md").exists()
+    assert (superpowers_dir / "GEMINI.md").exists()
+    assert (superpowers_dir / "skills").is_dir()
+    assert (superpowers_dir / "commands").is_dir()
+    assert (superpowers_dir / "hooks").is_dir()
+    assert (superpowers_dir / "agents").is_dir()
 
 
 def test_get_skills_dir_returns_existing_path():

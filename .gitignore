@@ -9,6 +9,6 @@ venv/
 .pytest_cache/
 *.egg
 .claude/
-.github/
+uncommited_docs/
 .idea/
 .vscode/

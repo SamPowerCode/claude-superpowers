@@ -23,7 +23,17 @@ agent-superpowers = "agent_superpowers.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-agent_superpowers = ["skills/**/*", "skills/**/.*"]
+agent_superpowers = [
+    "superpowers/**/*",
+    "superpowers/**/.*",
+    "superpowers/.claude-plugin/*",
+    "superpowers/.codex/*",
+    "superpowers/.cursor-plugin/*",
+    "superpowers/.opencode/*",
+    "superpowers/.opencode/**/*",
+    "superpowers/.gitattributes",
+    "superpowers/.gitignore",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
