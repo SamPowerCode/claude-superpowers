@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-superpowers"
-version = "5.1.0"
+version = "5.2.0"
 description = "Install obra/superpowers agentic skills for GitHub Copilot and Claude Code"
 readme = "README.md"
 license = { file = "LICENSE" }
